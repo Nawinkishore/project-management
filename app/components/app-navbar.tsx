@@ -2,8 +2,9 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { ModeToggle } from "./toggle-theme";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
-export default function Navbar() {
+import { UserNav } from "./app-usernav";
+export default async function Navbar() {
+   
     return (
         <nav className="h-20 border-b p-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -17,8 +18,9 @@ export default function Navbar() {
                     />
                 </div>
             </div>
-            <div>
+            <div className="flex items-center gap-2">
                 <ModeToggle />
+                <UserNav />
             </div>
         </nav>
     );

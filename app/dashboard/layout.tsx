@@ -1,14 +1,22 @@
+import { redirect } from "next/navigation";
 import Navbar from "../components/app-navbar";
 import { AppSidebar } from "../components/app-sidebar";
-
-export default function DashboardLayout({children}: {children: React.ReactNode}) {
-    return(
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+    if (!user) {
+        redirect("/"); // Redirect to home page if not authenticated
+    }
+    return (
         <div className="flex">
             <AppSidebar />
-            <main className="w-full flex-1">
+            <div className="w-full flex-1">
                 <Navbar />
-                {children}
-            </main>
+                <main className="pl-6 mt-5">
+                    {children}
+                </main>
+            </div>
         </div>
     )
 
