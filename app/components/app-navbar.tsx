@@ -1,0 +1,20 @@
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { ModeToggle } from "./toggle-theme";
+
+export default function Navbar() {
+  return (
+    <nav className="h-20 border-b p-4 flex items-center justify-between">
+      <div className="relative w-fit">
+        <Search className="h-4 w-4 text-muted-foreground absolute left-2 top-1/2 -translate-y-1/2" />
+        <Input
+          className="pl-8 max-w-44"
+          placeholder="Search..."
+        />
+      </div>
+      <div>
+        <ModeToggle/>
+      </div>
+    </nav>
+  );
+}
