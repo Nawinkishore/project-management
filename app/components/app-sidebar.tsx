@@ -21,14 +21,9 @@ const items = [
     icon: Home,
   },
   {
-    title: "Inbox",
+    title: "Timeline",
     url: "#",
     icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
   },
   {
     title: "Search",
@@ -37,6 +32,16 @@ const items = [
   },
   {
     title: "Settings",
+    url: "#",
+    icon: Settings,
+  },
+  {
+    title: "Users",
+    url: "#",
+    icon: Settings,
+  },
+   {
+    title: "Teams",
     url: "#",
     icon: Settings,
   },
