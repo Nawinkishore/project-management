@@ -26,7 +26,6 @@ async function deleteAllData(orderedFileNames: string[]) {
 }
 
 async function main() {
-  // ✅ FIXED PATH
  const dataDirectory = path.join(process.cwd(), "seedData");
 
 
