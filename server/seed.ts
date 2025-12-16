@@ -1,12 +1,12 @@
 import "dotenv/config";
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../generated/prisma/client'
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "./generated/prisma/client";
 import fs from "fs";
 import path from "path";
-const connectionString = `${process.env.DATABASE_URL}`
 
-const adapter = new PrismaPg({ connectionString })
-const prisma = new PrismaClient({ adapter })
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 async function deleteAllData(orderedFileNames: string[]) {
   const modelNames = orderedFileNames.map((fileName) => {
@@ -26,7 +26,9 @@ async function deleteAllData(orderedFileNames: string[]) {
 }
 
 async function main() {
-  const dataDirectory = path.join(__dirname, "seedData");
+  // ✅ FIXED PATH
+ const dataDirectory = path.join(process.cwd(), "seedData");
+
 
   const orderedFileNames = [
     "team.json",
@@ -43,21 +45,23 @@ async function main() {
 
   for (const fileName of orderedFileNames) {
     const filePath = path.join(dataDirectory, fileName);
+
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Seed file not found: ${filePath}`);
+    }
+
     const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
     const modelName = path.basename(fileName, path.extname(fileName));
     const model: any = prisma[modelName as keyof typeof prisma];
 
-    try {
-      for (const data of jsonData) {
-        await model.create({ data });
-      }
-      console.log(`Seeded ${modelName} with data from ${fileName}`);
-    } catch (error) {
-      console.error(`Error seeding data for ${modelName}:`, error);
+    for (const data of jsonData) {
+      await model.create({ data });
     }
+
+    console.log(`Seeded ${modelName} from ${fileName}`);
   }
 }
 
 main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+  .catch(console.error)
+  .finally(async () => prisma.$disconnect());
