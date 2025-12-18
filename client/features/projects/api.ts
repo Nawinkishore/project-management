@@ -1,9 +1,23 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import {
+  ProjectsSchema,
+  ProjectSchema,
   CreateProjectSchema,
-  CreateProjectInput,
-} from "@/schemas/project.create.schema";
+  type CreateProjectInput,
+} from "@/schemas/project.schema";
+
+export const useGetProjects = () => {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await api.get("/projects");
+
+      // optional but recommended: Zod validation
+      return ProjectsSchema.parse(res.data);
+    },
+  });
+};
 
 export const useCreateProject = () => {
   const queryClient = useQueryClient();
@@ -11,13 +25,10 @@ export const useCreateProject = () => {
   return useMutation({
     mutationFn: async (input: CreateProjectInput) => {
       const validated = CreateProjectSchema.parse(input);
-
       const res = await api.post("/projects", validated);
-      return res.data;
+      return ProjectSchema.parse(res.data);
     },
-
     onSuccess: () => {
-      // refresh project list later
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
