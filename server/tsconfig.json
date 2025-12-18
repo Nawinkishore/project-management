@@ -41,15 +41,15 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0"
+    // "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*"
-  ],
+, "src/generated"  ],
   "exclude": [
     "node_modules",
     "prisma",
-    "generated",
+    "src/generated",
     "src/lib"
   ]
 }
