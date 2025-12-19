@@ -1,5 +1,5 @@
 "use client"
-import { Home, ChartGantt, Search, Settings, User2, Users } from "lucide-react"
+import { Home, ChartGantt, Search, Settings, User2, Users ,FolderKanban,ChevronDown,ChevronUp } from "lucide-react"
 import { usePathname } from "next/navigation"
 import {
     Sidebar,
@@ -14,6 +14,8 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { useGetProjects } from "@/features/projects/api"
+import { useState } from "react"
 
 // Menu items.
 const items = [
@@ -51,11 +53,14 @@ const items = [
 
 export function AppSidebar() {
     const pathname = usePathname()
+    const { data: fetchProjects } = useGetProjects();
+    const [showProjects,setShowProjects] = useState(false);
+    console.log("Projects in sidebar:", fetchProjects);
     return (
-        <Sidebar>
+        <Sidebar className="overflow-y-auto">
             <SidebarHeader className="p-4 text-xl flex-row items-center justify-between ">
                 <div>
-                    Nawin Saas
+                    <h1 className="text-xl font-medium text-muted-foreground">Project Management</h1>
                 </div>
                 {/* <SidebarTrigger /> */}
             </SidebarHeader>
@@ -75,7 +80,24 @@ export function AppSidebar() {
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
+                        
+                       
                     </SidebarGroupContent>
+                    <SidebarGroupLabel className="flex justify-between">Projects <span onClick={() => setShowProjects(!showProjects)}>{showProjects ? <ChevronUp /> : <ChevronDown />}</span></SidebarGroupLabel>
+                    {showProjects && <SidebarGroupContent>
+                        <SidebarMenu>
+                            {fetchProjects?.map((project)=>(
+                                <SidebarMenuItem key={project.id}>
+                                    <SidebarMenuButton asChild className={pathname === `/dashboard/projects/${project.id}` ? "bg-accent/50" : ""}>
+                                        <Link href={`/dashboard/projects/${project.id}`}>
+                                            <FolderKanban />
+                                            <span>{project.name}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                        </SidebarGroupContent>}
                 </SidebarGroup>
             </SidebarContent>
         </Sidebar>

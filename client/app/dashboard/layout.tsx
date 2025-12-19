@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <AppSidebar />
             <div className="w-full flex-1">
                 <Navbar />
-                <main className="pl-6 mt-5">
+                <main className=" mt-5">
                     {children}
                 </main>
             </div>
