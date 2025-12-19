@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { UserSchema } from "./user.schema";
-
+import { CommentSchema } from "./comment.schema";
+import { AttachmentSchema } from "./attachment.schema";
 export const StatusEnum = z.enum([
   "To Do",
   "Work In Progress",
@@ -16,6 +17,8 @@ export const PriorityEnum = z.enum([
   "Backlog",
 ]);
 
+
+
 export const TaskSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -29,9 +32,14 @@ export const TaskSchema = z.object({
   projectId: z.number(),
   authorUserId: z.number(),
   assignedUserId: z.number().nullable(),
+
   author: UserSchema.optional(),
   assignee: UserSchema.optional(),
+
+  comments: z.array(CommentSchema).optional(),
+  attachments: z.array(AttachmentSchema).optional(),
 });
+
 
 export const TasksSchema = z.array(TaskSchema);
 

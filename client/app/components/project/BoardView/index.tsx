@@ -3,15 +3,19 @@
 import { useGetTasks, useUpdateTaskStatus } from "@/features/tasks/api";
 
 // ui and drag and drop
-import { DndProvider, useDrop } from "react-dnd";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Card } from "@/components/ui/card";
-import {EllipsisVertical, Plus } from "lucide-react";
+import { EllipsisVertical, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Schemas
 import { z } from "zod";
 import { StatusEnum, TaskSchema } from "@/schemas/task.schema";
+import { format } from "date-fns";
+
+import Image from "next/image";
+
 type TaskStatus = z.infer<typeof StatusEnum>;
 type Task = z.infer<typeof TaskSchema>;
 
@@ -91,18 +95,60 @@ const TaskColumn = ({
       {/* Tasks */}
       <div className="space-y-2">
         {filteredTasks.map((task) => (
-          <Card key={task.id} className="p-3 text-sm shadow-sm ">
-           <h1 className="text-muted-foreground">{task.title}</h1>
-           <h2>{task.description}</h2>
-
-          </Card>
+          <Task key={task.id} task={task} />
         ))}
       </div>
     </div>
   );
 };
 
+type TaskProps = {
+  task: Task;
 
+}
+
+const Task = ({ task }: TaskProps) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "task",
+    item: { id: task.id },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+
+    }),
+  }));
+
+  const taskTags = task.tags ? task.tags.split(',') : [];
+  const formattedStartDate = task.startDate ? format(new Date(task.startDate), "P") : '';
+  const formattedDueDate = task.dueDate ? format(new Date(task.dueDate), "P") : '';
+  const numberOfComments = (task.comments && task.comments.length) || 0;
+  const PriorityTag = ({ priority }: { priority: Task["priority"] }) => {
+    <div className={`rounded-full px-2 py-1 text-xs font-semibold
+       ${priority === "Urgent" ? "bg-red-500 text-red-700" : priority === "High" ? "bg-orange-500 text-orange-700" : priority === "Medium" ? "bg-yellow-500 text-yellow-700" :
+        priority === "Low" ? "bg-green-500 text-green-700" : priority === "Backlog" ? "bg-gray-500 text-gray-700" : ""}`}>
+      {priority}
+    </div>
+  };
+
+  return (
+    <div 
+    ref={(instance) => {
+      drag(instance)
+    }}
+    className={`mb-4 rounded-md ${
+      isDragging ? "opacity-50" : "opacity-100"}`}
+    >
+      {task.attachments && task.attachments.length > 0 && (
+        <Image 
+        src={`/${task.attachments[0].fileURL}`}
+        alt={task.attachments[0].fileName as string}
+        width={400}
+        height={200}
+        className="h-auto w-full rounded-t-md"
+        />
+      )}
+    </div>
+  )
+}
 const Board = ({ id, setIsModalNewTaskOpen }: BoardProps) => {
 
   const projectId = Number(id);
