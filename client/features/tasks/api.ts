@@ -9,12 +9,12 @@ import {
   type UpdateTaskInput,
 } from "@/schemas/task.schema";
 
-export const useGetTasks = (projectId: number) => {
+export const useGetTasks = (projectId:Number) => {
   return useQuery({
     queryKey: ["tasks", projectId],
     queryFn: async () => {
       const res = await api.get(`/tasks?projectId=${projectId}`);
-      return TasksSchema.parse(res.data);
+      return res.data;
     },
     enabled: !!projectId,
   });
@@ -27,7 +27,7 @@ export const useCreateTask = () => {
     mutationFn: async (input: CreateTaskInput) => {
       const validated = CreateTaskSchema.parse(input);
       const res = await api.post("/tasks", validated);
-      return TaskSchema.parse(res.data);
+      return res.data
     },
     onSuccess: (createdTask) => {
       queryClient.invalidateQueries({
@@ -49,7 +49,7 @@ export const useUpdateTaskStatus = () => {
         { status: validated.status }
       );
 
-      return TaskSchema.parse(res.data);
+      return res.data;
     },
     onSuccess: (updatedTask) => {
       queryClient.invalidateQueries({

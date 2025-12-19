@@ -14,7 +14,7 @@ export const useGetProjects = () => {
       const res = await api.get("/projects");
 
       // optional but recommended: Zod validation
-      return ProjectsSchema.parse(res.data);
+      return res.data;
     },
   });
 };
@@ -26,7 +26,7 @@ export const useCreateProject = () => {
     mutationFn: async (input: CreateProjectInput) => {
       const validated = CreateProjectSchema.parse(input);
       const res = await api.post("/projects", validated);
-      return ProjectSchema.parse(res.data);
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
