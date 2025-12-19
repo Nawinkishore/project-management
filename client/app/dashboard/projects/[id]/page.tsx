@@ -3,8 +3,8 @@
 import { useGetProjects } from "@/features/projects/api";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import ProjectHeader from "../ProjectHeader";
-import Board from "../BoardView";
+import ProjectHeader from "../../../components/project/ProjectHeader";
+import Board from "../../../components/project/BoardView";
 
 export default function ProjectPage() {
   const {id} = useParams<{id: string}>();

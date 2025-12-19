@@ -31,7 +31,7 @@ const TabButton = ({ name, icon, activeTab, setActiveTab }: TabProps) => {
 }
 
 export default function ProjectHeader({ activeTab, setActiveTab }: Props) {
-    const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
+    // const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
     return (
         <div className='px-4 xl:px-6'>
             <div className='pb-6 pt-6 lg:pb-4 lg:pt-8'>
