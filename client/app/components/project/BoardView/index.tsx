@@ -1,20 +1,31 @@
 "use client";
-
+// data fetching
 import { useGetTasks, useUpdateTaskStatus } from "@/features/tasks/api";
-import { z } from "zod";
-import { StatusEnum, TaskSchema } from "@/schemas/task.schema";
 
+// ui and drag and drop
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Card } from "@/components/ui/card";
-import { Dot, Eclipse, EllipsisVertical, Plus } from "lucide-react";
+import {EllipsisVertical, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Schemas
+import { z } from "zod";
+import { StatusEnum, TaskSchema } from "@/schemas/task.schema";
 type TaskStatus = z.infer<typeof StatusEnum>;
 type Task = z.infer<typeof TaskSchema>;
 
+
+// Types
 type BoardProps = {
   id: string;
+  setIsModalNewTaskOpen: (isOpen: boolean) => void;
+};
+
+type TaskColumnProps = {
+  status: TaskStatus;
+  tasks: Task[];
+  moveTask: (taskId: number, toStatus: TaskStatus) => void;
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
 };
 
@@ -25,49 +36,13 @@ const taskStatus: TaskStatus[] = [
   "Completed",
 ];
 
-const statusColorMap: Record<TaskStatus, string> = {
+const statusColorMap = {
   "To Do": "bg-red-500",
   "Work In Progress": "bg-yellow-500",
   "Under Review": "bg-blue-500",
   "Completed": "bg-green-500",
 };
 
-const Board = ({ id, setIsModalNewTaskOpen }: BoardProps) => {
-
-  const projectId = Number(id);
-  const { data: tasks = [], isLoading, error } = useGetTasks(projectId);
-  const { mutate: updateTask } = useUpdateTaskStatus();
-
-
-  const moveTask = (taskId: number, toStatus: TaskStatus) => {
-    updateTask({ taskId, status: toStatus });
-  };
-
-  if (isLoading) return <div>Loading...</div>;
-
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-4">
-        {taskStatus.map((status) => (
-          <TaskColumn
-            key={status}
-            status={status}
-            tasks={tasks}
-            moveTask={moveTask}
-            setIsModalNewTaskOpen={setIsModalNewTaskOpen}
-          />
-        ))}
-      </div>
-    </DndProvider>
-  );
-};
-
-type TaskColumnProps = {
-  status: TaskStatus;
-  tasks: Task[];
-  moveTask: (taskId: number, toStatus: TaskStatus) => void;
-  setIsModalNewTaskOpen: (isOpen: boolean) => void;
-};
 
 const TaskColumn = ({
   status,
@@ -117,12 +92,47 @@ const TaskColumn = ({
       <div className="space-y-2">
         {filteredTasks.map((task) => (
           <Card key={task.id} className="p-3 text-sm shadow-sm ">
-            {task.title}
+           <h1 className="text-muted-foreground">{task.title}</h1>
+           <h2>{task.description}</h2>
+
           </Card>
         ))}
       </div>
     </div>
   );
 };
+
+
+const Board = ({ id, setIsModalNewTaskOpen }: BoardProps) => {
+
+  const projectId = Number(id);
+  const { data: tasks = [], isLoading, error } = useGetTasks(projectId);
+  const { mutate: updateTask } = useUpdateTaskStatus();
+
+
+  const moveTask = (taskId: number, toStatus: TaskStatus) => {
+    updateTask({ taskId, status: toStatus });
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-4">
+        {taskStatus.map((status) => (
+          <TaskColumn
+            key={status}
+            status={status}
+            tasks={tasks}
+            moveTask={moveTask}
+            setIsModalNewTaskOpen={setIsModalNewTaskOpen}
+          />
+        ))}
+      </div>
+    </DndProvider>
+  );
+};
+
 
 export default Board;

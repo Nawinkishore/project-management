@@ -8,15 +8,14 @@ import Board from "../../../components/project/BoardView";
 
 export default function ProjectPage() {
   const {id} = useParams<{id: string}>();
-  const {data : project} = useGetProjects();
-  const [activeTab,setActtiveTab] = useState("Board");
-  const [isModleNewTaskOpen,setIsModleNewTaskOpen] = useState(false);
+  const [activeTab,setActiveTab] = useState("Board");
+  const [isModalNewTaskOpen,setIsModalNewTaskOpen] = useState(false);
   
 
   return <div>
-    <ProjectHeader activeTab={activeTab} setActiveTab={setActtiveTab} />
+    <ProjectHeader activeTab={activeTab} setActiveTab={setActiveTab} />
     {activeTab === "Board" && (
-      <Board id={id} setIsModalNewTaskOpen={setIsModleNewTaskOpen} />
+      <Board id={id} setIsModalNewTaskOpen={setIsModalNewTaskOpen} />
     )}
   </div>;
 
